@@ -488,8 +488,10 @@ module Cardano.Api (
     -- | Support for serialising values in the ledger's CDDL format.
     -- Note, this will be deprecated in the future in favour of a
     -- single API.
+    TextEnvelopeCddl(..),
     FromSomeTypeCDDL(..),
     readFileTextEnvelopeCddlAnyOf,
+    deserialiseFromTextEnvelopeCddlAnyOf,
     writeTxFileTextEnvelopeCddl,
     writeTxWitnessFileTextEnvelopeCddl,
     serialiseTxLedgerCddl,
