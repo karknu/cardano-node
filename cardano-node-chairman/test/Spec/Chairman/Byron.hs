@@ -14,9 +14,9 @@ import qualified Hedgehog as H
 import qualified Hedgehog.Extras.Test.Base as H
 import qualified Hedgehog.Extras.Test.Process as H
 import qualified System.Directory as IO
-import qualified Testnet.Byron as H
-import qualified Testnet.Conf as H
-import qualified Util.Base as H
+
+import qualified Testnet.Byron as B
+import qualified Cardano.Testnet as H
 
 {- HLINT ignore "Reduce duplication" -}
 {- HLINT ignore "Redundant <&>" -}
@@ -27,6 +27,6 @@ hprop_chairman = H.integration . H.runFinallies . H.workspace "chairman" $ \temp
   base <- H.note =<< H.noteIO . IO.canonicalizePath =<< H.getProjectBase
   configurationTemplate <- H.noteShow $ base </> "configuration/defaults/byron-mainnet/configuration.yaml"
   conf <- H.mkConf (H.ProjectBase base) (H.YamlFilePath configurationTemplate) tempAbsPath' Nothing
-  allNodes <- H.testnet H.defaultTestnetOptions conf
+  allNodes <- B.testnet B.defaultTestnetOptions conf
 
   chairmanOver 120 52 conf allNodes

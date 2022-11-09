@@ -57,27 +57,28 @@ library
                       , unordered-containers
 
   hs-source-dirs:       src
-  exposed-modules:      Parsers
-                        Parsers.Babbage
-                        Parsers.Byron
-                        Parsers.Cardano
-                        Parsers.Shelley
-                        Parsers.Version
+  exposed-modules:      Cardano.Testnet
+                        Testnet.Byron
                         Util.Assert
                         Util.Base
                         Util.Ignore
                         Util.Process
                         Util.Runtime
+                        Parsers
+                        
+  other-modules:        Parsers.Babbage
+                        Parsers.Byron
+                        Parsers.Cardano
+                        Parsers.Shelley
+                        Parsers.Version
                         Testnet
                         Testnet.Babbage
-                        Testnet.Byron
                         Testnet.Cardano
                         Testnet.Conf
                         Testnet.Run
                         Testnet.Shelley
                         Testnet.Utils
-
-  other-modules:        Paths_cardano_testnet
+                        Paths_cardano_testnet
 
   autogen-modules:      Paths_cardano_testnet
 

@@ -16,7 +16,8 @@ import qualified Test.Cli.Babbage.LeadershipSchedule
 import qualified Test.Cli.KesPeriodInfo
 import qualified Test.Node.Shutdown
 import qualified Test.ShutdownOnSlotSynced
-import qualified Util.Ignore as H
+
+import           Util.Ignore as H
 
 tests :: IO TestTree
 tests = pure $ T.testGroup "test/Spec.hs"
