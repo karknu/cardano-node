@@ -26,6 +26,9 @@ class (HasTypeProxy a, Typeable a) => SerialiseAsRawBytes a where
   serialiseToRawBytes :: a -> ByteString
 
   deserialiseFromRawBytes :: AsType a -> ByteString -> Maybe a
+  deserialiseFromRawBytes asType bs = rightToMaybe $ eitherDeserialiseFromRawBytes asType bs
+
+  eitherDeserialiseFromRawBytes :: AsType a -> ByteString -> Either String a
 
 serialiseToRawBytesHex :: SerialiseAsRawBytes a => a -> ByteString
 serialiseToRawBytesHex = Base16.encode . serialiseToRawBytes
@@ -60,5 +63,6 @@ deserialiseFromRawBytesHex
   => AsType a -> ByteString -> Either RawBytesHexError a
 deserialiseFromRawBytesHex proxy hex = do
   raw <- first (RawBytesHexErrorBase16DecodeFail hex) $ Base16.decode hex
-  maybe (Left $ RawBytesHexErrorRawBytesDecodeFail hex $ typeRep proxy) Right $
-    deserialiseFromRawBytes proxy raw
+  case eitherDeserialiseFromRawBytes proxy raw of
+    Left _ -> Left $ RawBytesHexErrorRawBytesDecodeFail hex $ typeRep proxy
+    Right a -> Right a

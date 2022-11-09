@@ -12,6 +12,7 @@ import           Cardano.Prelude
 
 import           Control.Monad.Trans.Except.Extra (firstExceptT, handleIOExceptT, hoistEither)
 import           Control.Tracer (stdoutTracer, traceWith)
+
 import qualified Data.ByteString as BS
 
 import           Cardano.Chain.Update (InstallerHash (..), ProtocolVersion (..),
@@ -77,8 +78,8 @@ readByronUpdateProposal :: FilePath -> ExceptT ByronUpdateProposalError IO Byron
 readByronUpdateProposal fp = do
   proposalBs <- handleIOExceptT (ByronReadUpdateProposalFileFailure fp . toS . displayException)
                   $ BS.readFile fp
-  let mProposal = deserialiseFromRawBytes AsByronUpdateProposal proposalBs
-  hoistEither $ maybe (Left $ UpdateProposalDecodingError fp) Right mProposal
+  let proposalResult = eitherDeserialiseFromRawBytes AsByronUpdateProposal proposalBs
+  hoistEither $ first (const (UpdateProposalDecodingError fp)) proposalResult
 
 submitByronUpdateProposal
   :: NetworkId

@@ -30,12 +30,12 @@ import qualified Cardano.Crypto.DSIGN.Class as Crypto
 import qualified Cardano.Crypto.Hash.Class as Crypto
 import qualified Cardano.Crypto.KES.Class as Crypto
 import qualified Cardano.Crypto.VRF.Class as Crypto
+import           Cardano.Ledger.Crypto (StandardCrypto)
 import qualified Cardano.Ledger.Crypto as Shelley (KES, VRF)
 import qualified Cardano.Ledger.Keys as Shelley
-import           Cardano.Ledger.Crypto (StandardCrypto)
 
-import           Cardano.Api.HasTypeProxy
 import           Cardano.Api.Hash
+import           Cardano.Api.HasTypeProxy
 import           Cardano.Api.Key
 import           Cardano.Api.SerialiseBech32
 import           Cardano.Api.SerialiseCBOR
@@ -43,6 +43,7 @@ import           Cardano.Api.SerialiseRaw
 import           Cardano.Api.SerialiseTextEnvelope
 import           Cardano.Api.SerialiseUsing
 
+import           Data.Either.Combinators (maybeToRight)
 
 --
 -- KES keys
@@ -94,16 +95,17 @@ instance SerialiseAsRawBytes (VerificationKey KesKey) where
     serialiseToRawBytes (KesVerificationKey vk) =
       Crypto.rawSerialiseVerKeyKES vk
 
-    deserialiseFromRawBytes (AsVerificationKey AsKesKey) bs =
-      KesVerificationKey <$>
-        Crypto.rawDeserialiseVerKeyKES bs
+    eitherDeserialiseFromRawBytes (AsVerificationKey AsKesKey) bs =
+      maybeToRight "Unable to deserialise VerificationKey KesKey" $
+        KesVerificationKey <$> Crypto.rawDeserialiseVerKeyKES bs
 
 instance SerialiseAsRawBytes (SigningKey KesKey) where
     serialiseToRawBytes (KesSigningKey sk) =
       Crypto.rawSerialiseSignKeyKES sk
 
-    deserialiseFromRawBytes (AsSigningKey AsKesKey) bs =
-      KesSigningKey <$> Crypto.rawDeserialiseSignKeyKES bs
+    eitherDeserialiseFromRawBytes (AsSigningKey AsKesKey) bs =
+      maybeToRight "Unable to deserialise SigningKey KesKey" $
+        KesSigningKey <$> Crypto.rawDeserialiseSignKeyKES bs
 
 instance SerialiseAsBech32 (VerificationKey KesKey) where
     bech32PrefixFor         _ =  "kes_vk"
@@ -126,8 +128,9 @@ instance SerialiseAsRawBytes (Hash KesKey) where
     serialiseToRawBytes (KesKeyHash vkh) =
       Crypto.hashToBytes vkh
 
-    deserialiseFromRawBytes (AsHash AsKesKey) bs =
-      KesKeyHash <$> Crypto.hashFromBytes bs
+    eitherDeserialiseFromRawBytes (AsHash AsKesKey) bs =
+      maybeToRight "Unable to deserialise Hash KesKey" $
+        KesKeyHash <$> Crypto.hashFromBytes bs
 
 instance HasTextEnvelope (VerificationKey KesKey) where
     textEnvelopeType _ = "KesVerificationKey_"
@@ -192,15 +195,17 @@ instance SerialiseAsRawBytes (VerificationKey VrfKey) where
     serialiseToRawBytes (VrfVerificationKey vk) =
       Crypto.rawSerialiseVerKeyVRF vk
 
-    deserialiseFromRawBytes (AsVerificationKey AsVrfKey) bs =
-      VrfVerificationKey <$> Crypto.rawDeserialiseVerKeyVRF bs
+    eitherDeserialiseFromRawBytes (AsVerificationKey AsVrfKey) bs =
+      maybeToRight "Unable to deserialise VerificationKey VrfKey" $
+        VrfVerificationKey <$> Crypto.rawDeserialiseVerKeyVRF bs
 
 instance SerialiseAsRawBytes (SigningKey VrfKey) where
     serialiseToRawBytes (VrfSigningKey sk) =
       Crypto.rawSerialiseSignKeyVRF sk
 
-    deserialiseFromRawBytes (AsSigningKey AsVrfKey) bs =
-      VrfSigningKey <$> Crypto.rawDeserialiseSignKeyVRF bs
+    eitherDeserialiseFromRawBytes (AsSigningKey AsVrfKey) bs =
+      maybeToRight "Unable to deserialise SigningKey VrfKey" $
+        VrfSigningKey <$> Crypto.rawDeserialiseSignKeyVRF bs
 
 instance SerialiseAsBech32 (VerificationKey VrfKey) where
     bech32PrefixFor         _ =  "vrf_vk"
@@ -222,8 +227,9 @@ instance SerialiseAsRawBytes (Hash VrfKey) where
     serialiseToRawBytes (VrfKeyHash vkh) =
       Crypto.hashToBytes vkh
 
-    deserialiseFromRawBytes (AsHash AsVrfKey) bs =
-      VrfKeyHash <$> Crypto.hashFromBytes bs
+    eitherDeserialiseFromRawBytes (AsHash AsVrfKey) bs =
+      maybeToRight "Unable to deserialise Hash VrfKey" $
+        VrfKeyHash <$> Crypto.hashFromBytes bs
 
 instance HasTextEnvelope (VerificationKey VrfKey) where
     textEnvelopeType _ = "VrfVerificationKey_" <> fromString (Crypto.algorithmNameVRF proxy)

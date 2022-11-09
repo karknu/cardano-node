@@ -153,8 +153,8 @@ instance HasTypeProxy PolicyId where
 
 instance SerialiseAsRawBytes PolicyId where
     serialiseToRawBytes (PolicyId sh) = serialiseToRawBytes sh
-    deserialiseFromRawBytes AsPolicyId bs =
-      PolicyId <$> deserialiseFromRawBytes AsScriptHash bs
+    eitherDeserialiseFromRawBytes AsPolicyId bs =
+      PolicyId <$> eitherDeserialiseFromRawBytes AsScriptHash bs
 
 scriptPolicyId :: Script lang -> PolicyId
 scriptPolicyId = PolicyId . hashScript
@@ -178,9 +178,9 @@ instance HasTypeProxy AssetName where
 
 instance SerialiseAsRawBytes AssetName where
     serialiseToRawBytes (AssetName bs) = bs
-    deserialiseFromRawBytes AsAssetName bs
-      | BS.length bs <= 32 = Just (AssetName bs)
-      | otherwise          = Nothing
+    eitherDeserialiseFromRawBytes AsAssetName bs
+      | BS.length bs <= 32 = Right (AssetName bs)
+      | otherwise          = Left $ "Unable to deserialise AssetName"
 
 
 data AssetId = AdaAssetId

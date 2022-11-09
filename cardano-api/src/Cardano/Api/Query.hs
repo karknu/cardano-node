@@ -72,6 +72,7 @@ import qualified Data.Aeson as Aeson
 import           Data.Aeson.Types (Parser)
 import           Data.Bifunctor (bimap, first)
 import qualified Data.ByteString.Lazy as LBS
+import           Data.Either.Combinators (rightToMaybe)
 import qualified Data.HashMap.Strict as HMS
 import           Data.Map (Map)
 import qualified Data.Map as Map
@@ -411,7 +412,7 @@ toShelleyAddrSet era =
     -- Ignore any addresses that are not appropriate for the era,
     -- e.g. Shelley addresses in the Byron era, as these would not
     -- appear in the UTxO anyway.
-  . mapMaybe (anyAddressInEra era)
+  . mapMaybe (rightToMaybe . anyAddressInEra era)
   . Set.toList
 
 
