@@ -44,6 +44,7 @@ data RawBytesHexError
   | RawBytesHexErrorRawBytesDecodeFail
       ByteString -- ^ original input
       TypeRep    -- ^ expected type
+      String -- ^ error message
   deriving (Show)
 
 instance Error RawBytesHexError where
@@ -51,8 +52,8 @@ instance Error RawBytesHexError where
     RawBytesHexErrorBase16DecodeFail input message ->
       "Expected Base16-encoded bytestring, but got " ++ pretty input ++ "; "
       ++ message
-    RawBytesHexErrorRawBytesDecodeFail input asType ->
-      "Failed to deserialise " ++ pretty input ++ " as " ++ show asType
+    RawBytesHexErrorRawBytesDecodeFail input asType e ->
+      "Failed to deserialise " ++ pretty input ++ " as " ++ show asType ++ ". " ++ e
     where
       pretty bs = case Text.decodeUtf8' bs of
         Right t -> Text.unpack t
@@ -64,5 +65,5 @@ deserialiseFromRawBytesHex
 deserialiseFromRawBytesHex proxy hex = do
   raw <- first (RawBytesHexErrorBase16DecodeFail hex) $ Base16.decode hex
   case eitherDeserialiseFromRawBytes proxy raw of
-    Left _ -> Left $ RawBytesHexErrorRawBytesDecodeFail hex $ typeRep proxy
+    Left e -> Left $ RawBytesHexErrorRawBytesDecodeFail hex (typeRep proxy) e
     Right a -> Right a
