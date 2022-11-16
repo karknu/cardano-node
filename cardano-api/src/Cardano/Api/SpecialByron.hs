@@ -58,7 +58,7 @@ instance SerialiseAsRawBytes ByronUpdateProposal where
   eitherDeserialiseFromRawBytes AsByronUpdateProposal bs =
     let lBs = LB.fromStrict bs
     in case Binary.decodeFull lBs of
-        Left e -> Left $ "Unable to deserialise ByronUpdateProposal: " <> show e
+        Left e -> Left $ SerialiseAsRawBytesError $ "Unable to deserialise ByronUpdateProposal: " <> show e
         Right proposal -> Right (ByronUpdateProposal proposal')
           where
             proposal' :: AProposal ByteString
@@ -171,7 +171,7 @@ instance SerialiseAsRawBytes ByronVote where
   eitherDeserialiseFromRawBytes AsByronVote bs =
     let lBs = LB.fromStrict bs
     in case Binary.decodeFull lBs of
-         Left e -> Left $ "Unable to deserialise ByronVote: " <> show e
+         Left e -> Left $ SerialiseAsRawBytesError $ "Unable to deserialise ByronVote: " <> show e
          Right vote -> Right . ByronVote $ annotateVote vote lBs
    where
     annotateVote :: ByronVote.AVote Binary.ByteSpan -> LB.ByteString -> ByronVote.AVote ByteString

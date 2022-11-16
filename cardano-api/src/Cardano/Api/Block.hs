@@ -295,7 +295,7 @@ instance SerialiseAsRawBytes (Hash BlockHeader) where
 
     eitherDeserialiseFromRawBytes (AsHash AsBlockHeader) bs
       | BS.length bs == 32 = Right $! HeaderHash (SBS.toShort bs)
-      | otherwise          = Left "Unable to deserialise Hash BlockHeader"
+      | otherwise          = Left (SerialiseAsRawBytesError "Unable to deserialise Hash BlockHeader")
 
 instance HasTypeProxy BlockHeader where
     data AsType BlockHeader = AsBlockHeader

@@ -12,7 +12,6 @@ import           Cardano.Prelude
 
 import           Control.Monad.Trans.Except.Extra (firstExceptT, handleIOExceptT, hoistEither)
 import           Control.Tracer (stdoutTracer, traceWith)
-
 import qualified Data.ByteString as BS
 
 import           Cardano.Chain.Update (InstallerHash (..), ProtocolVersion (..),

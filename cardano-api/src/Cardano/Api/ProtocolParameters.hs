@@ -688,7 +688,7 @@ instance SerialiseAsRawBytes PraosNonce where
       Crypto.hashToBytes h
 
     eitherDeserialiseFromRawBytes AsPraosNonce bs =
-      maybeToRight "Unable to deserialise PraosNonce" $
+      maybeToRight (SerialiseAsRawBytesError "Unable to deserialise PraosNonce") $
         PraosNonce <$> Crypto.hashFromBytes bs
 
 

@@ -94,7 +94,7 @@ instance SerialiseAsRawBytes TxId where
     serialiseToRawBytes (TxId h) = Crypto.hashToBytes h
     eitherDeserialiseFromRawBytes AsTxId bs = case Crypto.hashFromBytes bs of
       Just a -> Right (TxId a)
-      Nothing -> Left "Unable to deserialise TxId"
+      Nothing -> Left $ SerialiseAsRawBytesError "Unable to deserialise TxId"
 
 toByronTxId :: TxId -> Byron.TxId
 toByronTxId (TxId h) =

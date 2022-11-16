@@ -43,7 +43,7 @@ instance (SerialiseAsRawBytes a, Typeable a) => FromCBOR (UsingRawBytes a) where
       bs <- fromCBOR
       case eitherDeserialiseFromRawBytes ttoken bs of
         Right x  -> return (UsingRawBytes x)
-        Left msg -> fail ("cannot deserialise as a " ++ tname ++ ".  The error was: " ++ msg)
+        Left (SerialiseAsRawBytesError msg) -> fail ("cannot deserialise as a " ++ tname ++ ".  The error was: " ++ msg)
       where
         ttoken = proxyToAsType (Proxy :: Proxy a)
         tname  = (tyConName . typeRepTyCon . typeRep) (Proxy :: Proxy a)
@@ -92,7 +92,7 @@ deserialiseFromRawBytesBase16 str =
   case Base16.decode str of
     Right raw -> case eitherDeserialiseFromRawBytes ttoken raw of
       Right x  -> Right (UsingRawBytesHex x)
-      Left msg -> Left ("cannot deserialise " ++ show str ++ ".  The error was: " <> msg)
+      Left (SerialiseAsRawBytesError msg) -> Left ("cannot deserialise " ++ show str ++ ".  The error was: " <> msg)
     Left msg  -> Left ("invalid hex " ++ show str ++ ", " ++ msg)
   where
     ttoken = proxyToAsType (Proxy :: Proxy a)

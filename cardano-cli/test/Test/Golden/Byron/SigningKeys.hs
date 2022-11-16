@@ -73,7 +73,7 @@ prop_generate_and_read_nonlegacy_signingkeys :: Property
 prop_generate_and_read_nonlegacy_signingkeys = property $ do
   byronSkey <- liftIO $ generateSigningKey AsByronKey
   case eitherDeserialiseFromRawBytes (AsSigningKey AsByronKey) (serialiseToRawBytes byronSkey) of
-    Left _ -> failWith Nothing $ "Failed to deserialise non-legacy Byron signing key. "
+    Left _ -> failWith Nothing "Failed to deserialise non-legacy Byron signing key. "
     Right _ -> success
 
 prop_migrate_legacy_to_nonlegacy_signingkeys :: Property

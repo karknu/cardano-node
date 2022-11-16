@@ -180,7 +180,7 @@ instance SerialiseAsRawBytes AssetName where
     serialiseToRawBytes (AssetName bs) = bs
     eitherDeserialiseFromRawBytes AsAssetName bs
       | BS.length bs <= 32 = Right (AssetName bs)
-      | otherwise          = Left $
+      | otherwise          = Left $ SerialiseAsRawBytesError $
           "Unable to deserialise AssetName (the bytestring should be no longer than 32 bytes long " <>
           "which corresponds to a hex representation of 64 characters)"
 

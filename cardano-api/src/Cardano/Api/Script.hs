@@ -939,7 +939,7 @@ instance SerialiseAsRawBytes ScriptHash where
       Crypto.hashToBytes h
 
     eitherDeserialiseFromRawBytes AsScriptHash bs =
-      maybeToRight "Enable to deserialise ScriptHash" $
+      maybeToRight (SerialiseAsRawBytesError "Enable to deserialise ScriptHash") $
         ScriptHash . Shelley.ScriptHash <$> Crypto.hashFromBytes bs
 
 

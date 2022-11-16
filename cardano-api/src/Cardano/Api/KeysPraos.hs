@@ -24,6 +24,7 @@ module Cardano.Api.KeysPraos (
 
 import           Prelude
 
+import           Data.Either.Combinators (maybeToRight)
 import           Data.String (IsString (..))
 
 import qualified Cardano.Crypto.DSIGN.Class as Crypto
@@ -42,8 +43,6 @@ import           Cardano.Api.SerialiseCBOR
 import           Cardano.Api.SerialiseRaw
 import           Cardano.Api.SerialiseTextEnvelope
 import           Cardano.Api.SerialiseUsing
-
-import           Data.Either.Combinators (maybeToRight)
 
 --
 -- KES keys
@@ -96,7 +95,7 @@ instance SerialiseAsRawBytes (VerificationKey KesKey) where
       Crypto.rawSerialiseVerKeyKES vk
 
     eitherDeserialiseFromRawBytes (AsVerificationKey AsKesKey) bs =
-      maybeToRight "Unable to deserialise VerificationKey KesKey" $
+      maybeToRight (SerialiseAsRawBytesError "Unable to deserialise VerificationKey KesKey") $
         KesVerificationKey <$> Crypto.rawDeserialiseVerKeyKES bs
 
 instance SerialiseAsRawBytes (SigningKey KesKey) where
@@ -104,7 +103,7 @@ instance SerialiseAsRawBytes (SigningKey KesKey) where
       Crypto.rawSerialiseSignKeyKES sk
 
     eitherDeserialiseFromRawBytes (AsSigningKey AsKesKey) bs =
-      maybeToRight "Unable to deserialise SigningKey KesKey" $
+      maybeToRight (SerialiseAsRawBytesError "Unable to deserialise SigningKey KesKey") $
         KesSigningKey <$> Crypto.rawDeserialiseSignKeyKES bs
 
 instance SerialiseAsBech32 (VerificationKey KesKey) where
@@ -129,7 +128,7 @@ instance SerialiseAsRawBytes (Hash KesKey) where
       Crypto.hashToBytes vkh
 
     eitherDeserialiseFromRawBytes (AsHash AsKesKey) bs =
-      maybeToRight "Unable to deserialise Hash KesKey" $
+      maybeToRight (SerialiseAsRawBytesError "Unable to deserialise Hash KesKey") $
         KesKeyHash <$> Crypto.hashFromBytes bs
 
 instance HasTextEnvelope (VerificationKey KesKey) where
@@ -196,7 +195,7 @@ instance SerialiseAsRawBytes (VerificationKey VrfKey) where
       Crypto.rawSerialiseVerKeyVRF vk
 
     eitherDeserialiseFromRawBytes (AsVerificationKey AsVrfKey) bs =
-      maybeToRight "Unable to deserialise VerificationKey VrfKey" $
+      maybeToRight (SerialiseAsRawBytesError "Unable to deserialise VerificationKey VrfKey") $
         VrfVerificationKey <$> Crypto.rawDeserialiseVerKeyVRF bs
 
 instance SerialiseAsRawBytes (SigningKey VrfKey) where
@@ -204,7 +203,7 @@ instance SerialiseAsRawBytes (SigningKey VrfKey) where
       Crypto.rawSerialiseSignKeyVRF sk
 
     eitherDeserialiseFromRawBytes (AsSigningKey AsVrfKey) bs =
-      maybeToRight "Unable to deserialise SigningKey VrfKey" $
+      maybeToRight (SerialiseAsRawBytesError "Unable to deserialise SigningKey VrfKey") $
         VrfSigningKey <$> Crypto.rawDeserialiseSignKeyVRF bs
 
 instance SerialiseAsBech32 (VerificationKey VrfKey) where
@@ -228,7 +227,7 @@ instance SerialiseAsRawBytes (Hash VrfKey) where
       Crypto.hashToBytes vkh
 
     eitherDeserialiseFromRawBytes (AsHash AsVrfKey) bs =
-      maybeToRight "Unable to deserialise Hash VrfKey" $
+      maybeToRight (SerialiseAsRawBytesError "Unable to deserialise Hash VrfKey") $
         VrfKeyHash <$> Crypto.hashFromBytes bs
 
 instance HasTextEnvelope (VerificationKey VrfKey) where

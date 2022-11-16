@@ -79,7 +79,7 @@ generateInsecureSigningKey g keytype = do
   let (bs, g') = Random.genByteString (fromIntegral $ deterministicSigningKeySeedSize keytype) g
   case eitherDeserialiseFromRawBytes (AsSigningKey keytype) bs of
     Right key -> return (key, g')
-    Left msg -> error $ "generateInsecureSigningKey: Unable to generate insecure key: " <> msg
+    Left (SerialiseAsRawBytesError msg) -> error $ "generateInsecureSigningKey: Unable to generate insecure key: " <> msg
 
 instance HasTypeProxy a => HasTypeProxy (VerificationKey a) where
     data AsType (VerificationKey a) = AsVerificationKey (AsType a)
