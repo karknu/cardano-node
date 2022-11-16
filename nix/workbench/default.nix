@@ -40,7 +40,7 @@ let
       jq
       moreutils
       procps
-      cabal-install
+      cabalWrapped
 
       cardano-cli
       cardano-topology
