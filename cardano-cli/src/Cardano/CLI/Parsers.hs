@@ -6,11 +6,12 @@ module Cardano.CLI.Parsers
   , pref
   ) where
 
-import           Cardano.Prelude
 import           Cardano.CLI.Byron.Parsers (backwardsCompatibilityCommands, parseByronCommands)
+import           Cardano.CLI.Ping (parsePingCommand)
 import           Cardano.CLI.Render (customRenderHelp)
 import           Cardano.CLI.Run (ClientCommand (..))
 import           Cardano.CLI.Shelley.Parsers (parseShelleyCommands)
+import           Cardano.Prelude
 import           Options.Applicative
 import           Prelude (String)
 
@@ -45,6 +46,7 @@ parseClientCommand =
     -- so we list it first.
     [ parseShelley
     , parseByron
+    , parsePing
     , parseDeprecatedShelleySubcommand
     , backwardsCompatibilityCommands
     , parseDisplayVersion opts
@@ -61,6 +63,14 @@ parseByron =
         "Byron specific commands"
          parseByronCommands
     ]
+
+pingInfo :: ParserInfo ClientCommand
+pingInfo =
+  Opt.info (CliPingCommand <$> parsePingCommand)
+    $ Opt.progDesc "Assemble a tx body and witness(es) to form a transaction"
+
+parsePing :: Parser ClientCommand
+parsePing = Opt.subparser $ Opt.command "sign-witness" pingInfo <> Opt.internal
 
 -- | Parse Shelley-related commands at the top level of the CLI.
 parseShelley :: Parser ClientCommand
