@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -34,8 +35,10 @@ module Cardano.CLI.Shelley.Run.Read
   , CddlError
   , CddlTx(..)
   , IncompleteTx(..)
+  , TxOrTxBody
   , readFileTx
   , readFileTxBody
+  , readInputTxBodyOrTxFile
   , renderCddlError
   , readCddlTx -- For testing purposes
 
@@ -76,7 +79,7 @@ import qualified Cardano.Binary as CBOR
 import           Data.Text (Text)
 
 import           Cardano.CLI.Shelley.Key
-import           Cardano.CLI.Shelley.Parsers
+import           Cardano.CLI.Shelley.Commands
 import           Cardano.CLI.Types
 
 -- Metadata
@@ -459,21 +462,46 @@ readFileTx fp = do
 -- while UnwitnessedCliFormattedTxBody is CLI formatted TxBody and
 -- needs to be key witnessed.
 
-data IncompleteTx
-  = UnwitnessedCliFormattedTxBody (InAnyCardanoEra TxBody)
-  | IncompleteCddlFormattedTx (InAnyCardanoEra Tx)
+data IncompleteTx era
+  = UnwitnessedCliFormattedTxBody (TxBody era)
+  | IncompleteCddlFormattedTx (Tx era)
 
-readFileTxBody :: FilePath -> IO (Either CddlError IncompleteTx)
-readFileTxBody fp = do
-  eTxBody <- readFileInAnyCardanoEra AsTxBody fp
-  case eTxBody of
-    Left e -> fmap (IncompleteCddlFormattedTx . unCddlTx) <$> acceptTxCDDLSerialisation e
-    Right txBody -> return $ Right $ UnwitnessedCliFormattedTxBody txBody
+data TxOrTxBody era
+  = CompleteTx (Tx era)
+  | IncompleteTx (IncompleteTx era)
+
+readFileTxBody :: FilePath -> IO (Either CddlError (InAnyCardanoEra IncompleteTx))
+readFileTxBody fp = readFileInAnyCardanoEra AsTxBody fp >>= \case
+  Right txBody -> heavyReturn UnwitnessedCliFormattedTxBody txBody
+  Left e -> do
+    acceptTxCDDLSerialisation e >>= \case
+      Right (CddlTx tx) -> heavyReturn IncompleteCddlFormattedTx tx
+      Left err -> return $ Left err
+  where
+    heavyReturn
+      :: (forall era. IsCardanoEra era => thing1 era -> thing2 era)
+      -> (InAnyCardanoEra thing1)
+      -> IO (Either CddlError (InAnyCardanoEra thing2))
+    heavyReturn a b  = return $ Right $ liftAnyCardanoEra a b
 
 data CddlError = CddlErrorTextEnv
                    !(FileError TextEnvelopeError)
                    !(FileError TextEnvelopeCddlError)
                | CddlIOError (FileError TextEnvelopeError)
+
+liftAnyCardanoEra :: (forall era. IsCardanoEra era => thing1 era -> thing2 era) -> InAnyCardanoEra thing1 -> InAnyCardanoEra thing2
+liftAnyCardanoEra f (InAnyCardanoEra era a) = InAnyCardanoEra era $ f a
+
+readInputTxBodyOrTxFile :: InputTxBodyOrTxFile -> IO (Either CddlError (InAnyCardanoEra TxOrTxBody))
+readInputTxBodyOrTxFile = \case
+  InputTxBodyFile (TxBodyFile fp) -> heavyLift IncompleteTx $ readFileTxBody fp
+  InputTxFile (TxFile fp) -> heavyLift CompleteTx $ readFileTx fp
+  where
+    heavyLift
+      :: (forall era. IsCardanoEra era => thing1 era -> thing2 era)
+      -> IO (Either CddlError (InAnyCardanoEra thing1))
+      -> IO (Either CddlError (InAnyCardanoEra thing2))
+    heavyLift a b  = b >>= return . fmap (liftAnyCardanoEra a)
 
 renderCddlError :: CddlError -> Text
 renderCddlError (CddlErrorTextEnv textEnvErr cddlErr) =
