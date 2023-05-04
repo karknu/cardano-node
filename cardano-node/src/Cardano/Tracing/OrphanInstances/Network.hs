@@ -175,6 +175,7 @@ instance HasSeverityAnnotation [TraceLabelPeer peer (FetchDecision [Point header
           Left FetchDeclineInFlightThisPeer      -> Debug
           Left FetchDeclineInFlightOtherPeer     -> Debug
           Left FetchDeclinePeerShutdown          -> Info
+          Left FetchDeclinePeerStarting          -> Info
           Left FetchDeclinePeerSlow              -> Info
           Left FetchDeclineReqsInFlightLimit {}  -> Info
           Left FetchDeclineBytesInFlightLimit {} -> Info

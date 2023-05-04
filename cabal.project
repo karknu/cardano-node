@@ -179,9 +179,9 @@ source-repository-package
   --sha256: 00fvvaf4ir4hskq4a6gggbh2wmdvy8j8kn6s4m1p1vlh8m8mq514
 
 source-repository-package
-   type: git
-   location: https://github.com/karknu/ouroboros-network
-   tag: 3c7a8290d01b23440bd5517d67b4fe8ce17997f8
+  type: git
+  location: https://github.com/karknu/ouroboros-network
+  tag: fbe03df3c3a6e6b111eb7c59911a234f5ddcd3c0
   subdir:
     ouroboros-network
     ouroboros-consensus
