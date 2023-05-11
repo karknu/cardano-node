@@ -181,7 +181,7 @@ source-repository-package
 source-repository-package
   type: git
   location: https://github.com/karknu/ouroboros-network
-  tag: 37b532d26e2b169be23d111f2cb278a5cf6c156f
+  tag: 601ce17b53cff246836870ad462a84ec35599b29
   subdir:
     ouroboros-network
     ouroboros-consensus
