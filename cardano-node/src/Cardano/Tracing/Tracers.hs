@@ -697,9 +697,9 @@ mkConsensusTracers mbEKGDirect trSel verb tr nodeKern fStats = do
   pure Consensus.Tracers
     { Consensus.chainSyncClientTracer = tracerOnOff (traceChainSyncClient trSel) verb "ChainSyncClient" tr
     , Consensus.chainSyncServerHeaderTracer =
-      Tracer $ \ev -> do
+      Tracer $ \ct@(TraceLabelPeer _p ev) -> do
         traceWith (annotateSeverity . toLogObject' verb $ appendName "ChainSyncHeaderServer"
-                    (tracerOnOff' (traceChainSyncHeaderServer trSel) tr)) ev
+                    (tracerOnOff' (traceChainSyncHeaderServer trSel) tr)) ct
         traceServedCount mbEKGDirect ev
     , Consensus.chainSyncServerBlockTracer = tracerOnOff (traceChainSyncBlockServer trSel) verb "ChainSyncBlockServer" tr
     , Consensus.blockFetchDecisionTracer = tracerOnOff' (traceBlockFetchDecisions trSel) $
@@ -774,19 +774,19 @@ mkConsensusTracers mbEKGDirect trSel verb tr nodeKern fStats = do
 
 
 traceBlockFetchServerMetrics
-  :: forall blk. ()
+  :: forall blk peer. ()
   => Tracer IO (LoggerName, LogObject Text)
   -> LOMeta
   -> STM.TVar Int64
   -> STM.TVar Int64
   -> STM.TVar SlotNo
-  -> Tracer IO (TraceBlockFetchServerEvent blk)
-  -> Tracer IO (TraceBlockFetchServerEvent blk)
+  -> Tracer IO (TraceLabelPeer peer (TraceBlockFetchServerEvent blk))
+  -> Tracer IO (TraceLabelPeer peer (TraceBlockFetchServerEvent blk))
 traceBlockFetchServerMetrics trMeta meta tBlocksServed tLocalUp tMaxSlotNo tracer = Tracer bsTracer
 
   where
-    bsTracer :: TraceBlockFetchServerEvent blk -> IO ()
-    bsTracer e@(TraceBlockFetchServerSendBlock p) = do
+    bsTracer :: TraceLabelPeer peer (TraceBlockFetchServerEvent blk) -> IO ()
+    bsTracer e@(TraceLabelPeer _p (TraceBlockFetchServerSendBlock p)) = do
       traceWith tracer e
 
       (served, mbLocalUpstreamyness) <- atomically $ do
