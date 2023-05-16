@@ -111,7 +111,7 @@ package snap-server
 source-repository-package
   type: git
   location: https://github.com/karknu/ouroboros-network
-  tag: f7d1eb142ab086bdfc8ea1739dfc955c3e69da8b
+  tag: ef341205d11a41e5754f21fc9a9c40477e0ea9fe
   subdir:
     ouroboros-network
 
