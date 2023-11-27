@@ -67,6 +67,7 @@ source-repository-package
   tag: 6fbfa954dbfe3e4e34035ecbf7fc68d5fcc97841
   subdir:
     ouroboros-consensus-cardano
+  --sha256: sha256-Cx6cidMJPgy4SMO5Zn+vYUyRenUKLyAJ+0Rb3xbXI4I=
 
 source-repository-package
   type: git
@@ -75,4 +76,4 @@ source-repository-package
   subdir:
     ouroboros-network-api
     ouroboros-network
-
+  --sha256: sha256-lTZDnO7StnX2f9zcGYKXj4iapSilKIck7FMxToAn0EI=
