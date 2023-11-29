@@ -76,4 +76,4 @@ source-repository-package
   subdir:
     ouroboros-network-api
     ouroboros-network
-  --sha256: sha256-Hq3kxYWpXtBRJHnmc42cpUnzZBowFpIvVFbhkENXXVA=
+  sha256: sha256-XQmH59FBktcV6BMNyDI3vA2NKK8OPhQtLXiIExSTkkA=
